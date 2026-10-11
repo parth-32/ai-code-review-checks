@@ -23,6 +23,9 @@ export function createApp(): Application {
   // Auth Routes
   app.post('/api/v1/auth/register', (req, res, next) => authController.register(req, res, next));
   app.post('/api/v1/auth/login', (req, res, next) => authController.login(req, res, next));
+  app.post('/api/v1/auth/refresh', (req, res, next) => authController.refreshToken(req, res, next));
+  app.post('/api/v1/auth/forgot-password', (req, res, next) => authController.forgotPassword(req, res, next));
+  app.post('/api/v1/auth/reset-password', (req, res, next) => authController.resetPassword(req, res, next));
 
   // Product Catalog
   app.get('/api/v1/products', async (req, res, next) => {

@@ -36,6 +36,58 @@ export class AuthController {
       next(error);
     }
   }
+
+  async refreshToken(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { refreshToken } = req.body;
+      if (!refreshToken) {
+        throw new AppError(400, 'refreshToken is required');
+      }
+
+      const tokens = await authService.refreshTokens(refreshToken);
+      res.status(200).json({
+        status: 'success',
+        data: tokens,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async forgotPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { email } = req.body;
+      if (!email) {
+        throw new AppError(400, 'Email address is required');
+      }
+
+      const result = await authService.requestPasswordReset(email);
+      res.status(200).json({
+        status: 'success',
+        message: 'Password reset instructions generated',
+        data: result,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async resetPassword(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      const { token, newPassword } = req.body;
+      if (!token || !newPassword) {
+        throw new AppError(400, 'Token and newPassword are required');
+      }
+
+      await authService.resetPassword(token, newPassword);
+      res.status(200).json({
+        status: 'success',
+        message: 'Password successfully updated',
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const authController = new AuthController();
