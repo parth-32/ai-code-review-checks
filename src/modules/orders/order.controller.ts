@@ -64,6 +64,52 @@ export class OrderController {
       next(error);
     }
   }
+
+  async checkout(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user) {
+        throw new AppError(401, 'Unauthorized');
+      }
+
+      const id = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+      const { paymentMethodId } = req.body;
+
+      if (!paymentMethodId) {
+        throw new AppError(400, 'paymentMethodId is required for checkout');
+      }
+
+      const order = await orderService.checkout({
+        orderId: id,
+        userId: req.user.id,
+        paymentMethodId,
+      });
+
+      res.status(200).json({
+        status: 'success',
+        message: 'Order checked out and paid successfully',
+        data: order,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+
+  async listDetailed(req: Request, res: Response, next: NextFunction): Promise<void> {
+    try {
+      if (!req.user) {
+        throw new AppError(401, 'Unauthorized');
+      }
+
+      const detailed = await orderService.listOrdersDetailed(req.user.id);
+      res.status(200).json({
+        status: 'success',
+        results: detailed.length,
+        data: detailed,
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
 }
 
 export const orderController = new OrderController();
