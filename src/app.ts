@@ -52,7 +52,9 @@ export function createApp(): Application {
   // Order Routes (Protected)
   app.post('/api/v1/orders', authGuard, (req, res, next) => orderController.create(req, res, next));
   app.get('/api/v1/orders/mine', authGuard, (req, res, next) => orderController.listMine(req, res, next));
+  app.get('/api/v1/orders/detailed', authGuard, (req, res, next) => orderController.listDetailed(req, res, next));
   app.get('/api/v1/orders/:id', authGuard, (req, res, next) => orderController.getById(req, res, next));
+  app.post('/api/v1/orders/:id/checkout', authGuard, (req, res, next) => orderController.checkout(req, res, next));
 
   // Global Error Handler
   app.use(errorHandler);
